@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Player;
-use App\Form\Player1Type;
+use App\Form\PlayerType;
 use App\Repository\PlayerRepository;
+use App\Service\BfvService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,8 @@ class PlayerController extends AbstractController
 {
     /**
      * @Route("/", name="player_index", methods={"GET"})
+     * @param PlayerRepository $playerRepository
+     * @return Response
      */
     public function index(PlayerRepository $playerRepository): Response
     {
@@ -27,11 +30,13 @@ class PlayerController extends AbstractController
 
     /**
      * @Route("/new", name="player_new", methods={"GET","POST"})
+     * @param Request $request
+     * @return Response
      */
     public function new(Request $request): Response
     {
         $player = new Player();
-        $form = $this->createForm(Player1Type::class, $player);
+        $form = $this->createForm(PlayerType::class, $player);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -50,20 +55,28 @@ class PlayerController extends AbstractController
 
     /**
      * @Route("/{id}", name="player_show", methods={"GET"})
+     * @param BfvService $bfvService
+     * @param Player $player
+     * @return Response
      */
-    public function show(Player $player): Response
+    public function show(BfvService $bfvService, Player $player): Response
     {
+        $stats = $bfvService->getStatsFromPLayer($player);
         return $this->render('player/show.html.twig', [
             'player' => $player,
+            'stats' => $stats,
         ]);
     }
 
     /**
      * @Route("/{id}/edit", name="player_edit", methods={"GET","POST"})
+     * @param Request $request
+     * @param Player $player
+     * @return Response
      */
     public function edit(Request $request, Player $player): Response
     {
-        $form = $this->createForm(Player1Type::class, $player);
+        $form = $this->createForm(PlayerType::class, $player);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -80,6 +93,9 @@ class PlayerController extends AbstractController
 
     /**
      * @Route("/{id}", name="player_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param Player $player
+     * @return Response
      */
     public function delete(Request $request, Player $player): Response
     {
@@ -89,6 +105,19 @@ class PlayerController extends AbstractController
             $entityManager->flush();
         }
 
+        return $this->redirectToRoute('player_index');
+    }
+
+    /**
+     * TODO: really this should be a PUT but life is too short.
+     *
+     * @Route("/{id}/update", name="player_update", methods={"GET"})
+     * @param BfvService $bfvService
+     * @param Player $player
+     * @return Response
+     */
+    public function update(BfvService $bfvService, Player $player): Response {
+        $bfvService->fetchStats($player);
         return $this->redirectToRoute('player_index');
     }
 }

@@ -8,21 +8,23 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                <th><i class="fa fa-eye" aria-hidden="true"></i></th>
                 <th>Network</th>
                 <th>Username</th>
+                <th>Player</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for player in players %}
             <tr>
-                <td>{{ player.id }}</td>
+                <td><a href="{{ path('player_show', {'id': player.id}) }}"><i class="fa fa-id-card" aria-hidden="true"></i></a></td>
                 <td>{{ player.network }}</td>
-                <td>{{ player.username }}</td>
+                <td><a href="{{ path('player_show', {'id': player.id}) }}">{{ player.username }}</a></td>
+                <td><a href="{{ path('player_show', {'id': player.id}) }}">{{ player.playerName }}</a></td>
                 <td>
-                    <a href="{{ path('player_show', {'id': player.id}) }}">show</a>
                     <a href="{{ path('player_edit', {'id': player.id}) }}">edit</a>
+                    <a href="{{ path('player_update', {'id': player.id}) }}">update</a>
                 </td>
             </tr>
         {% else %}

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}FHT Stats!{% endblock %}
+
+{% block body %}
+<h1>FHT Stats</h1>
+<div class="container-fluid">
+
+    <table class="table-striped">
+        <tr>
+            <th scope="col">Player</th>
+            <th scope="col">Score/Min</th>
+            <th scope="col">K/D</th>
+            <th scope="col">Kills/Min</th>
+            <th scope="col">Win %</th>
+            <th scope="col">Accuracy</th>
+            <th scope="col">Longest<br />Headshot</th>
+            <th scope="col">Time Played</th>
+            <th scope="col">Rank</th>
+            <th scope="col">Kill<br />Streak</th>
+            <th scope="col">Top Class &amp; Weapon</th>
+        </tr>
+        {% set row = 0 %}
+        {% for player in players %}
+            {% set stats = player.stats %}
+            <tr scope="row">{% include 'index/tr.html.twig' with { 'name': player.playerName, 'stat': stats.first } %}</tr>
+            {% if stats | length > 1 %}
+                <!-- tr scope="row">{% include 'index/tr.html.twig' with { 'name': player.playerName, 'stat': stats.next } %}</ -->
+            {% endif %}
+        {% endfor %}
+    </table>
+
+</div>
+{% endblock %}

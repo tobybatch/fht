@@ -26,5 +26,17 @@
 
     <a href="{{ path('player_edit', {'id': player.id}) }}">edit</a>
 
+    <table class="table">
+        <tbody>
+            <tr>
+                {{ include('stat/th.html.twig') }}
+            </tr>
+            {% for stat in stats %}
+                <tr>
+                    {{ include('stat/tr.html.twig') }}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {{ include('player/_delete_form.html.twig') }}
 {% endblock %}

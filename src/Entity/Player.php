@@ -31,8 +31,14 @@ class Player
 
     /**
      * @ORM\OneToMany(targetEntity=Stats::class, mappedBy="player", orphanRemoval=true)
+     * @ORM\OrderBy({"lastUpdated" = "DESC"})
      */
     private $stats;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $playerName;
 
     public function __construct()
     {
@@ -95,6 +101,18 @@ class Player
                 $stat->setPlayer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPlayerName(): ?string
+    {
+        return $this->playerName;
+    }
+
+    public function setPlayerName(string $playerName): self
+    {
+        $this->playerName = $playerName;
 
         return $this;
     }

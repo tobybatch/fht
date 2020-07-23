@@ -1,0 +1,27 @@
+<td>
+    {{ name }}<br />
+    {{ stat.lastUpdated |date('Y-m-d') }}
+</td>
+<td>{{ stat.scorePerMinute | round }}</td>
+<td>{{ stat.kdr | round(3) }}</td>
+<td>{{ stat.killsPerMin | round(3) }}</td>
+<td>{{ stat.winLossPercent | round(3) }}%</td>
+<td>{{ stat.accuracy | round(3) }}%</td>
+<td>{{ stat.longestHeadshot }}m</td>
+<td>
+    {% set seconds = stat.timePlayed %}
+    {% set days = (seconds/86400)|round(0, 'floor') %}
+    {% set hours = stat.timePlayed|date('H') %}
+    {% set minutes = stat.timePlayed|date('i') %}
+    {% if days > 0 %}{{ days }}D{% endif %}
+    {% if hours > 0 %}{{ hours }}H{% endif %}
+    {% if minutes > 0 and hours > 0 %}{{ minutes }}M{% endif %}
+</td>
+<td>{{ stat.rank }}</td>
+<td>{{ stat.killStreak }}</td>
+<td>
+    {{ stat.topClass }}<br />
+    {{ stat.topWeapon }}<br />
+    {{ stat.topWeaponKills }} kills
+</td>
+

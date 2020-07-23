@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\StatsRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,95 +16,90 @@ class Stats
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private int $id;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $lastUpdated;
+    private DateTimeInterface $lastUpdated;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $scorePerMinute;
+    private float $scorePerMinute;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $kdr;
+    private float $kdr;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $killsPerMin;
+    private float $killsPerMin;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $winPercentage;
-
-    /**
-     * @ORM\Column(type="float")
-     */
-    private $accuracy;
+    private float $accuracy;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $longestHeadshot;
+    private int $longestHeadshot;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $timePlayed;
+    private int $timePlayed;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $rank;
+    private int $rank;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $killStreak;
+    private int $killStreak;
 
     /**
      * @ORM\Column(type="string", length=48)
      */
-    private $topClass;
+    private string $topClass;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $topWeapon;
+    private string $topWeapon;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $topWeaponKills;
+    private int $topWeaponKills;
 
     /**
      * @ORM\ManyToOne(targetEntity=Player::class, inversedBy="Stats")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $player;
+    private Player $player;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $winLossPercent;
+    private float $winLossPercent;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLastUpdated(): ?\DateTimeInterface
+    public function getLastUpdated(): ?DateTimeInterface
     {
         return $this->lastUpdated;
     }
 
-    public function setLastUpdated(\DateTimeInterface $lastUpdated): self
+    public function setLastUpdated(DateTimeInterface $lastUpdated): self
     {
         $this->lastUpdated = $lastUpdated;
 
@@ -146,18 +142,6 @@ class Stats
         return $this;
     }
 
-    public function getWinPercentage(): ?float
-    {
-        return $this->winPercentage;
-    }
-
-    public function setWinPercentage(float $winPercentage): self
-    {
-        $this->winPercentage = $winPercentage;
-
-        return $this;
-    }
-
     public function getAccuracy(): ?float
     {
         return $this->accuracy;
@@ -184,72 +168,72 @@ class Stats
 
     public function getTimePlayed(): ?int
     {
-        return $this->TimePlayed;
+        return $this->timePlayed;
     }
 
-    public function setTimePlayed(int $TimePlayed): self
+    public function setTimePlayed(int $timePlayed): self
     {
-        $this->TimePlayed = $TimePlayed;
+        $this->timePlayed = $timePlayed;
 
         return $this;
     }
 
     public function getRank(): ?int
     {
-        return $this->Rank;
+        return $this->rank;
     }
 
-    public function setRank(int $Rank): self
+    public function setRank(int $rank): self
     {
-        $this->Rank = $Rank;
+        $this->rank = $rank;
 
         return $this;
     }
 
     public function getKillStreak(): ?int
     {
-        return $this->KillStreak;
+        return $this->killStreak;
     }
 
     public function setKillStreak(int $KillStreak): self
     {
-        $this->KillStreak = $KillStreak;
+        $this->killStreak = $KillStreak;
 
         return $this;
     }
 
     public function getTopClass(): ?string
     {
-        return $this->TopClass;
+        return $this->topClass;
     }
 
     public function setTopClass(string $TopClass): self
     {
-        $this->TopClass = $TopClass;
+        $this->topClass = $TopClass;
 
         return $this;
     }
 
     public function getTopWeapon(): ?string
     {
-        return $this->TopWeapon;
+        return $this->topWeapon;
     }
 
     public function setTopWeapon(string $TopWeapon): self
     {
-        $this->TopWeapon = $TopWeapon;
+        $this->topWeapon = $TopWeapon;
 
         return $this;
     }
 
     public function getTopWeaponKills(): ?int
     {
-        return $this->TopWeaponKills;
+        return $this->topWeaponKills;
     }
 
     public function setTopWeaponKills(int $TopWeaponKills): self
     {
-        $this->TopWeaponKills = $TopWeaponKills;
+        $this->topWeaponKills = $TopWeaponKills;
 
         return $this;
     }

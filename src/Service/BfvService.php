@@ -1,15 +1,24 @@
 <?php
 
-
 namespace App\Service;
-
 
 use App\Entity\Player;
 use App\Entity\Stats;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class BfvService
 {
-    public const FETCH_URL = "https://api.tracker.gg/api/v1/bfv/profile/%s/%s"
+    public const FETCH_URL = "https://api.tracker.gg/api/v1/bfv/profile/%s/%s";
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     public function fetchStats(Player $player): Player {
         $url = sprintf(self::FETCH_URL, $player->getNetwork(), $player->getUsername());
@@ -18,10 +27,9 @@ class BfvService
         $stats = $this->buildStats($data);
         $player->addStat($stats);
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($stats);
-        $entityManager->persist($player);
-        $entityManager->flush();
+        $this->entityManager->persist($stats);
+        $this->entityManager->persist($player);
+        $this->entityManager->flush();
 
         return $player;
     }
@@ -31,16 +39,16 @@ class BfvService
 
 
         $stats = new Stats();
-        $stats->setLastUpdated(new \DateTime($data['data']['lastUpdated']));
-        $stats->setAccuracy($rawstats['shotsAccuracy']['displayValue']);
-        $stats->setKdr($rawstats['kdRatio']['displayValue']);
-        $stats->setKillsPerMin($rawstats['killsPerMinute']['displayValue']);
-        $stats->setKillStreak($rawstats['killStreak']['displayValue']);
-        $stats->setLongestHeadshot($rawstats['longestHeadshot']['displayValue']);
-        $stats->setRank($rawstats['rank']['displayValue']);
-        $stats->setScorePerMinute($rawstats['scorePerMinute']['displayValue']);
-        $stats->setTimePlayed($rawstats['timePlayed']['displayValue']);
-        $stats->setWinLossPercent($rawstats['wlPercentage']['displayValue']);
+        $stats->setLastUpdated(new \DateTime($data['lastUpdated']));
+        $stats->setAccuracy($rawstats['shotsAccuracy']['value']);
+        $stats->setKdr($rawstats['kdRatio']['value']);
+        $stats->setKillsPerMin($rawstats['killsPerMinute']['value']);
+        $stats->setKillStreak($rawstats['killStreak']['value']);
+        $stats->setLongestHeadshot($rawstats['longestHeadshot']['value']);
+        $stats->setRank($rawstats['rank']['value']);
+        $stats->setScorePerMinute($rawstats['scorePerMinute']['value']);
+        $stats->setTimePlayed($rawstats['timePlayed']['value']);
+        $stats->setWinLossPercent($rawstats['wlPercentage']['value']);
 
         $topscore = 0;
         $topclass = "unknown";
@@ -55,7 +63,7 @@ class BfvService
 
         $topWeaponKills = 0;
         $topWeapon = "unknown";
-        foreach ($data['data']['weapons'] as £weapon) {
+        foreach ($data['data']['weapons'] as $weapon) {
             $kills = $weapon['kills']['value'];
             if ($kills > $topWeaponKills) {
                 $topWeaponKills = $kills;
@@ -66,5 +74,18 @@ class BfvService
         $stats->setTopWeaponKills($topWeaponKills);
 
         return $stats;
+    }
+
+    public function getStatsFromPLayer(Player $player): array
+    {
+        $stats = $player->getStats()->toArray();
+        usort($stats, function($one, $two) {
+            return $one->getLastUpdated() < $two->getLastUpdated();
+        });
+        $uniq = [];
+        foreach ($stats as $stat) {
+            $uniq[$stat->getLastUpdated()->getTimestamp()] = $stat;
+        }
+        return array_values($uniq);
     }
 }
