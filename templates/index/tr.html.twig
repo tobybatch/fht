@@ -1,14 +1,14 @@
-<td>
-    {{ name }}<br />
-    {{ stat.lastUpdated |date('Y-m-d') }}
+<td class="player-lastupdated">
+    <span class="name">{{ name }}</span><br />
+    <span class="lastupdated">{{ stat.lastUpdated |date('Y-m-d') }}</span>
 </td>
-<td>{{ stat.scorePerMinute | round }}</td>
-<td>{{ stat.kdr | round(3) }}</td>
-<td>{{ stat.killsPerMin | round(3) }}</td>
-<td>{{ stat.winLossPercent | round(3) }}%</td>
-<td>{{ stat.accuracy | round(3) }}%</td>
-<td>{{ stat.longestHeadshot }}m</td>
-<td>
+<td class="spm td-centre" data-val="{{ stat.scorePerMinute }}" >{{ stat.scorePerMinute | round }}</td>
+<td class="kdr td-centre" data-val="{{ stat.kdr }}"            >{{ stat.kdr | round(3) }}</td>
+<td class="kpm td-centre" data-val="{{ stat.killsPerMin }}"    >{{ stat.killsPerMin | round(3) }}</td>
+<td class="wlp td-centre" data-val="{{ stat.winLossPercent }}" >{{ stat.winLossPercent | round(3) }}%</td>
+<td class="acc td-centre" data-val="{{ stat.accuracy }}"       >{{ stat.accuracy | round(3) }}%</td>
+<td class="lhs td-centre" data-val="{{ stat.longestHeadshot }}">{{ stat.longestHeadshot }}m</td>
+<td class="timeplayed td-centre" data-val="{{ stat.timePlayed }}">
     {% set seconds = stat.timePlayed %}
     {% set days = (seconds/86400)|round(0, 'floor') %}
     {% set hours = stat.timePlayed|date('H') %}
@@ -17,11 +17,10 @@
     {% if hours > 0 %}{{ hours }}H{% endif %}
     {% if minutes > 0 and hours > 0 %}{{ minutes }}M{% endif %}
 </td>
-<td>{{ stat.rank }}</td>
-<td>{{ stat.killStreak }}</td>
-<td>
-    {{ stat.topClass }}<br />
-    {{ stat.topWeapon }}<br />
-    {{ stat.topWeaponKills }} kills
+<td class="rank td-centre" data-val="{{ stat.rank }}">{{ stat.rank }}</td>
+<td class="killstreak td-centre" data-val="{{ stat.killStreak }}">{{ stat.killStreak }}</td>
+<td class="topclassWep">
+    <span class="topclass">{{ stat.topClass }}</span><br />
+    <span class="topWep">{{ stat.topWeapon }}</span>
+    (<span class="topWepKills" data-val="{{ stat.topWeaponKills }}">{{ stat.topWeaponKills }} kills</span>)
 </td>
-

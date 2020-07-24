@@ -6,18 +6,18 @@
 <h1>FHT Stats</h1>
 <div class="container-fluid">
 
-    <table class="table-striped">
+    <table id="players" class="table-striped">
         <tr>
             <th scope="col">Player</th>
-            <th scope="col">Score/Min</th>
-            <th scope="col">K/D</th>
-            <th scope="col">Kills/Min</th>
-            <th scope="col">Win %</th>
-            <th scope="col">Accuracy</th>
-            <th scope="col">Longest<br />Headshot</th>
-            <th scope="col">Time Played</th>
-            <th scope="col">Rank</th>
-            <th scope="col">Kill<br />Streak</th>
+            <th scope="col" class="td-centre">Score/Min</th>
+            <th scope="col" class="td-centre">K/D</th>
+            <th scope="col" class="td-centre">Kills/Min</th>
+            <th scope="col" class="td-centre">Win %</th>
+            <th scope="col" class="td-centre">Accuracy</th>
+            <th scope="col" class="td-centre">Longest<br />Headshot</th>
+            <th scope="col" class="td-centre">Time Played</th>
+            <th scope="col" class="td-centre">Rank</th>
+            <th scope="col" class="td-centre">Kill<br />Streak</th>
             <th scope="col">Top Class &amp; Weapon</th>
         </tr>
         {% set row = 0 %}
@@ -31,4 +31,38 @@
     </table>
 
 </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $( document ).ready(function() {
+        highlightBestElement(".spm");
+        highlightBestElement(".kdr");
+        highlightBestElement(".kpm");
+        highlightBestElement(".wlp");
+        highlightBestElement(".acc");
+        highlightBestElement(".lhs");
+        highlightBestElement(".rank");
+        highlightBestElement(".killstreak");
+        highlightBestElement(".timeplayed");
+        highlightBestElement(".topWepKills");
+
+        function highlightBestElement(eleName) {
+            var bestScore = 0;
+            var bestElement = undefined;
+            $(eleName).each(function() {
+                var score = $(this).data("val");
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestElement = $(this);
+                }
+            });
+            if (bestElement != undefined) {
+                bestElement.css("background-color", "green");
+                bestElement.css("color", "white");
+                bestElement.css("font-weight", "bold");
+            }
+        }
+    });
+</script>
 {% endblock %}
