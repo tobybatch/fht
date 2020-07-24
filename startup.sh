@@ -11,8 +11,9 @@ function waitForDB() {
 
   # If we use mysql wait until its online
   if [[ $DB_TYPE == "mysql" ]]; then
-      echo "Using Mysql DB"
+      echo "Using Mysql DB, $DATABASE_URL"
       echo "Wait for db connection ..."
+      echo "mysql:host=$DB_HOST;dbname=$DB_BASE\", \"$DB_USER\", \"$DB_PASS\""
       until php -r "new PDO(\"mysql:host=$DB_HOST;dbname=$DB_BASE\", \"$DB_USER\", \"$DB_PASS\");" &> /dev/null; do
           sleep 3
       done
@@ -25,6 +26,7 @@ function waitForDB() {
 function handleStartup() {
   # first start?
   if ! [ -e /opt/bfv/installed ]; then 
+    touch /opt/bfv/.env
     echo "first run - install symfony"
     /opt/bfv/bin/console -n doctrine:schema:create
     echo $bfv > /opt/bfv/installed
@@ -32,18 +34,8 @@ function handleStartup() {
   echo "bfv2 ready"
 }
 
-function runServer() {
-  /opt/bfv/bin/console bfv:reload --env=$APP_ENV
-  if [ -e /use_apache ]; then 
-    /usr/sbin/apache2ctl -D FOREGROUND
-  elif [ -e /use_fpm ]; then 
-    exec php-fpm
-  else
-    echo "Error, unknown server type"
-  fi
-}
-
 waitForDB
 handleStartup
-runServer
+/opt/bfv/bin/console cache:clear --env=$APP_ENV
+exec php-fpm
 exit

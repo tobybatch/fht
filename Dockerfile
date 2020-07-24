@@ -1,11 +1,8 @@
-FROM alpine:3.12 AS git-dev
-RUN apk add --no-cache git && \
-    git clone --depth 1 https://github.com/tobybatch/fht.git /opt/bfv
-
-# production kimai source
-FROM git-dev AS git-prod
+FROM alpine:3.12 AS git
 WORKDIR /opt/kimai
-RUN rm -r tests || true
+RUN apk add --no-cache git && \
+    git clone --depth 1 https://github.com/tobybatch/fht.git /opt/bfv && \
+    rm -r tests || true
 
 FROM composer:1.9 AS composer
 RUN mkdir /opt/bfv && \
@@ -36,27 +33,18 @@ RUN apk add --no-cache \
     libpng-dev \
     # icu
     icu-dev \
-    # ldap
-    openldap-dev \
-    libldap \
     # zip
     libzip-dev \
     # xsl
     libxslt-dev
 
 FROM fpm-alpine-php-ext-base AS php-ext-gd
-RUN docker-php-ext-configure gd \
-        --with-freetype && \
+RUN docker-php-ext-configure gd --with-freetype && \
     docker-php-ext-install -j$(nproc) gd
 
 # php extension intl : 15.26s
 FROM fpm-alpine-php-ext-base AS php-ext-intl
 RUN docker-php-ext-install -j$(nproc) intl
-
-# php extension ldap : 8.45s
-FROM fpm-alpine-php-ext-base AS php-ext-ldap
-RUN docker-php-ext-configure ldap && \
-    docker-php-ext-install -j$(nproc) ldap
 
 # php extension pdo_mysql : 6.14s
 FROM fpm-alpine-php-ext-base AS php-ext-pdo_mysql
@@ -110,9 +98,6 @@ COPY --from=php-ext-pdo_mysql /usr/local/lib/php/extensions/no-debug-non-zts-201
 # PHP extension zip
 COPY --from=php-ext-zip /usr/local/etc/php/conf.d/docker-php-ext-zip.ini /usr/local/etc/php/conf.d/docker-php-ext-zip.ini
 COPY --from=php-ext-zip /usr/local/lib/php/extensions/no-debug-non-zts-20190902/zip.so /usr/local/lib/php/extensions/no-debug-non-zts-20190902/zip.so
-# PHP extension ldap
-COPY --from=php-ext-ldap /usr/local/etc/php/conf.d/docker-php-ext-ldap.ini /usr/local/etc/php/conf.d/docker-php-ext-ldap.ini
-COPY --from=php-ext-ldap /usr/local/lib/php/extensions/no-debug-non-zts-20190902/ldap.so /usr/local/lib/php/extensions/no-debug-non-zts-20190902/ldap.so
 # PHP extension gd
 COPY --from=php-ext-gd /usr/local/etc/php/conf.d/docker-php-ext-gd.ini /usr/local/etc/php/conf.d/docker-php-ext-gd.ini
 COPY --from=php-ext-gd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/gd.so /usr/local/lib/php/extensions/no-debug-non-zts-20190902/gd.so
@@ -130,38 +115,23 @@ VOLUME [ "/opt/bfv" ]
 ENTRYPOINT /startup.sh
 
 ###########################
-# final builds
+# final build
 ###########################
-
-# developement build
-FROM base AS dev
-# copy bfv develop source
-COPY --from=git-dev --chown=www-data:www-data /opt/bfv /opt/bfv
-COPY monolog-dev.yaml /opt/bfv/config/packages/dev/monolog.yaml
-# do the composer deps installation
-RUN export COMPOSER_HOME=/composer
-RUN composer install --working-dir=/opt/bfv --optimize-autoloader
-RUN composer clearcache
-RUN chown -R www-data:www-data /opt/bfv
-RUN sed "s/128M/256M/g" /usr/local/etc/php/php.ini-development > /usr/local/etc/php/php.ini
-RUN sed "s/128M/-1/g" /usr/local/etc/php/php.ini-development > /opt/bfv/php-cli.ini
-RUN sed -i "s/env php/env -S php -c \/opt\/bfv\/php-cli.ini/g" /opt/bfv/bin/console
-ENV APP_ENV=dev
-USER www-data
-
-# production build
 FROM base AS prod
 # copy bfv production source
-COPY --from=git-prod --chown=www-data:www-data /opt/bfv /opt/bfv
+COPY --from=git --chown=www-data:www-data /opt/bfv /opt/bfv
 COPY monolog-prod.yaml /opt/bfv/config/packages/prod/monolog.yaml
-# do the composer deps installation
-RUN export COMPOSER_HOME=/composer
-RUN composer install --working-dir=/opt/bfv --optimize-autoloader
-RUN composer clearcache
-RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
-RUN chown -R www-data:www-data /opt/bfv
+WORKDIR /opt/bfv
+RUN \
+    echo APP_ENV=prod > /opt/bfv/.env && \
+    composer install --working-dir=/opt/bfv --no-dev --optimize-autoloader && \
+    composer require symfony/dotenv && \
+    mkdir -p /opt/bfv/var/cache && \
+    composer clearcache && \
+    chown -R www-data:www-data /opt/bfv && \
+    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
 ENV APP_ENV=prod
-USER www-data
 
 
 
