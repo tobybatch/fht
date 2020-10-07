@@ -56,7 +56,7 @@ class Stats
     /**
      * @ORM\Column(type="integer")
      */
-    private int $rank;
+    private int $player_rank;
 
     /**
      * @ORM\Column(type="integer")
@@ -178,14 +178,14 @@ class Stats
         return $this;
     }
 
-    public function getRank(): ?int
+    public function getPlayerRank(): ?int
     {
-        return $this->rank;
+        return $this->player_rank;
     }
 
-    public function setRank(int $rank): self
+    public function setPlayerRank(int $player_rank): self
     {
-        $this->rank = $rank;
+        $this->player_rank = $player_rank;
 
         return $this;
     }

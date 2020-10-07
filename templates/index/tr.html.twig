@@ -2,23 +2,26 @@
     <span class="name">{{ name }}</span><br />
     <span class="lastupdated">{{ stat.lastUpdated |date('Y-m-d') }}</span>
 </td>
-<td class="spm td-centre" data-val="{{ stat.scorePerMinute }}" >{{ stat.scorePerMinute | round }}</td>
-<td class="kdr td-centre" data-val="{{ stat.kdr }}"            >{{ stat.kdr | round(3) }}</td>
-<td class="kpm td-centre" data-val="{{ stat.killsPerMin }}"    >{{ stat.killsPerMin | round(3) }}</td>
-<td class="wlp td-centre" data-val="{{ stat.winLossPercent }}" >{{ stat.winLossPercent | round(3) }}%</td>
-<td class="acc td-centre" data-val="{{ stat.accuracy }}"       >{{ stat.accuracy | round(3) }}%</td>
-<td class="lhs td-centre" data-val="{{ stat.longestHeadshot }}">{{ stat.longestHeadshot }}m</td>
-<td class="timeplayed td-centre" data-val="{{ stat.timePlayed }}">
-    {% set seconds = stat.timePlayed %}
-    {% set days = (seconds/86400)|round(0, 'floor') %}
-    {% set hours = stat.timePlayed|date('H') %}
-    {% set minutes = stat.timePlayed|date('i') %}
-    {% if days > 0 %}{{ days }}D{% endif %}
-    {% if hours > 0 %}{{ hours }}H{% endif %}
-    {% if minutes > 0 and hours > 0 %}{{ minutes }}M{% endif %}
+
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with {
+        'class': 'spm',
+        'stat': stat.scorePerMinute | round,
+        'oldstat': oldstat.scorePerMinute | round,
+        'unit': ''
+    } %}
 </td>
-<td class="rank td-centre" data-val="{{ stat.rank }}">{{ stat.rank }}</td>
-<td class="killstreak td-centre" data-val="{{ stat.killStreak }}">{{ stat.killStreak }}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'kdr', 'stat': stat.kdr            | round(3), 'unit': 'm' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'kpm', 'stat': stat.killsPerMin    | round(3), 'unit': '' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'wlp', 'stat': stat.winLossPercent | round(3), 'unit': '%' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'acc', 'stat': stat.accuracy       | round(3), 'unit': '' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'lhs', 'stat': stat.longestHeadshot,           'unit': 'm' } %}</td>
+
+{% set played = stat.timePlayed | playedTime %}
+
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'timeplayed', 'stat': played,          'unit': '' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'rank',       'stat': stat.rank,       'unit': '' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'killstreak', 'stat': stat.killStreak, 'unit': '' } %}</td>
+
 <td class="topclassWep">
     <span class="topclass">{{ stat.topClass }}</span><br />
     <span class="topWep">{{ stat.topWeapon }}</span>

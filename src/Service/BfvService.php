@@ -45,7 +45,7 @@ class BfvService
         $stats->setKillsPerMin($rawstats['killsPerMinute']['value']);
         $stats->setKillStreak($rawstats['killStreak']['value']);
         $stats->setLongestHeadshot($rawstats['longestHeadshot']['value']);
-        $stats->setRank($rawstats['rank']['value']);
+        $stats->setPlayerRank($rawstats['rank']['value']);
         $stats->setScorePerMinute($rawstats['scorePerMinute']['value']);
         $stats->setTimePlayed($rawstats['timePlayed']['value']);
         $stats->setWinLossPercent($rawstats['wlPercentage']['value']);

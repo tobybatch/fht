@@ -84,10 +84,8 @@ class Player
 
     public function addStat(Stats $stat): self
     {
-        if (!$this->stats->contains($stat)) {
-            $this->stats[] = $stat;
-            $stat->setPlayer($this);
-        }
+        $this->stats[] = $stat;
+        $stat->setPlayer($this);
 
         return $this;
     }

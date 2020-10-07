@@ -22,10 +22,18 @@
         </tr>
         {% set row = 0 %}
         {% for player in players %}
-            {% set stats = player.stats %}
-            <tr scope="row">{% include 'index/tr.html.twig' with { 'name': player.playerName, 'stat': stats.first } %}</tr>
-            {% if stats | length > 1 %}
-                <!-- tr scope="row">{% include 'index/tr.html.twig' with { 'name': player.playerName, 'stat': stats.next } %}</ -->
+            {% set stats = player.stats.toArray %}
+            {% if stats | length > 0 %}
+              <tr scope="row">{% include 'index/tr.html.twig' with {
+                      'name': player.playerName,
+                      'stat': stats[0],
+                      'oldstat': []
+                  } %}
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="11">{{ player.playerName }}</td>
+              </tr>
             {% endif %}
         {% endfor %}
     </table>
