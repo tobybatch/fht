@@ -114,6 +114,8 @@ ENV TRUSTED_HOSTS=nginx,localhost,127.0.0.1
 VOLUME [ "/opt/bfv" ]
 ENTRYPOINT /startup.sh
 
+
+
 ###########################
 # final build
 ###########################
@@ -122,6 +124,9 @@ FROM base AS prod
 COPY --from=git --chown=www-data:www-data /opt/bfv /opt/bfv
 COPY monolog-prod.yaml /opt/bfv/config/packages/prod/monolog.yaml
 WORKDIR /opt/bfv
+RUN apk add --no-cache nodejs npm
+RUN npm install yarn
+RUN node_modules/.bin/yarn install
 RUN \
     echo APP_ENV=prod > /opt/bfv/.env && \
     composer install --working-dir=/opt/bfv --no-dev --optimize-autoloader && \
