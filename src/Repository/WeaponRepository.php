@@ -9,6 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @method Weapon|null find($id, $lockMode = null, $lockVersion = null)
  * @method Weapon|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Weapon|null findOneByBfCode(string $name)
  * @method Weapon[]    findAll()
  * @method Weapon[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

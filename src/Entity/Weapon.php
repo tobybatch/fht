@@ -20,7 +20,7 @@ class Weapon
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $bf_code;
+    private $bfCode;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -34,12 +34,12 @@ class Weapon
 
     public function getBfCode(): ?string
     {
-        return $this->bf_code;
+        return $this->bfCode;
     }
 
-    public function setBfCode(string $bf_code): self
+    public function setBfCode(string $bfCode): self
     {
-        $this->bf_code = $bf_code;
+        $this->bfCode = $bfCode;
 
         return $this;
     }

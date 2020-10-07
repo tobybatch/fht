@@ -22,7 +22,7 @@
 <td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'killstreak', 'stat': stat.killStreak, 'unit': '' } %}</td>
 
 <td class="topclassWep">
-    <span class="topclass">{{ stat.topClass }}</span><br />
-    <span class="topWep">{{ stat.topWeapon }}</span>
+    <span class="topclass">{{ stat.topClass|capitalize }}</span><br />
+    <span class="topWep">{{ stat.topWeapon | weaponName }}</span>
     (<span class="topWepKills" data-val="{{ stat.topWeaponKills }}">{{ stat.topWeaponKills }} kills</span>)
 </td>

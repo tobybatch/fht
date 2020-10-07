@@ -31,7 +31,11 @@ class TwigExtension extends AbstractExtension
 
   public function weaponName(string $code)
   {
-
+    $weapon = $this->weaponRepository->findOneByBfCode($code);
+    if ($weapon) {
+      return $weapon->getName();
+    }
+    return $code;
   }
 
   /**
