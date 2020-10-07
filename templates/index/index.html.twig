@@ -26,8 +26,7 @@
             {% if stats | length > 0 %}
               <tr scope="row">{% include 'index/tr.html.twig' with {
                       'name': player.playerName,
-                      'stat': stats[0],
-                      'oldstat': []
+                      'stat': stats[0]
                   } %}
               </tr>
             {% else %}
