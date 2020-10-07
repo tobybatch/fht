@@ -18,7 +18,7 @@
 {% set played = stat.timePlayed | playedTime %}
 
 <td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'timeplayed', 'stat': played,          'unit': '' } %}</td>
-<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'rank',       'stat': stat.player_rank,       'unit': '' } %}</td>
+<td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'rank',       'stat': stat.playerRank,       'unit': '' } %}</td>
 <td class="td-centre">{% include 'index/stat-cell.html.twig' with { 'class': 'killstreak', 'stat': stat.killStreak, 'unit': '' } %}</td>
 
 <td class="topclassWep">
