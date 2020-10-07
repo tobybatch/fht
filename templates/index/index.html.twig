@@ -37,39 +37,11 @@
         {% endfor %}
     </table>
 
+    <div>
+      <div><span style="background-color: #2aa876">&nbsp;&nbsp;&nbsp;&nbsp;</span> Best</div>
+      <div><span style="background-color: #0a7b83">&nbsp;&nbsp;&nbsp;&nbsp;</span> Second</div>
+      <div><span style="background-color: #ffd265">&nbsp;&nbsp;&nbsp;&nbsp;</span> Third</div>
+    </div>
+
 </div>
-{% endblock %}
-
-{% block javascripts %}
-<script>
-    $( document ).ready(function() {
-        highlightBestElement(".spm");
-        highlightBestElement(".kdr");
-        highlightBestElement(".kpm");
-        highlightBestElement(".wlp");
-        highlightBestElement(".acc");
-        highlightBestElement(".lhs");
-        highlightBestElement(".rank");
-        highlightBestElement(".killstreak");
-        highlightBestElement(".timeplayed");
-        highlightBestElement(".topWepKills");
-
-        function highlightBestElement(eleName) {
-            var bestScore = 0;
-            var bestElement = undefined;
-            $(eleName).each(function() {
-                var score = $(this).data("val");
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestElement = $(this);
-                }
-            });
-            if (bestElement != undefined) {
-                bestElement.css("background-color", "green");
-                bestElement.css("color", "white");
-                bestElement.css("font-weight", "bold");
-            }
-        }
-    });
-</script>
 {% endblock %}

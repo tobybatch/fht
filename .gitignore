@@ -19,3 +19,13 @@
 dump.sql
 init.sql
 mysql/
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+access.log
+error.log
+package-lock.json
