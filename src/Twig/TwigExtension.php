@@ -3,16 +3,33 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use App\Repository\WeaponRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 class TwigExtension extends AbstractExtension
 {
-    public function getFilters()
+
+  /**
+   * @var WeaponRepository
+   */
+  private WeaponRepository $weaponRepository;
+
+  public function __construct(WeaponRepository $weaponRepository)
+    {
+      $this->weaponRepository = $weaponRepository;
+    }
+
+  public function getFilters()
     {
         return [
-            new TwigFilter('playedTime', [$this, 'playedTime']),
+          new TwigFilter('playedTime', [$this, 'playedTime']),
+          new TwigFilter('weaponName', [$this, 'weaponName']),
         ];
+    }
+
+    public function weaponName(string $code) {
+
     }
 
     /**
