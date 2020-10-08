@@ -2,6 +2,14 @@ body {
     background-color: #cdcdcd;
 }
 
+label {
+  width: 100px;
+}
+
+.topclassWep {
+  padding-left: 15px;
+}
+
 .table-striped {
   width: 100%;
 }

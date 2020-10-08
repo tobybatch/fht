@@ -3,7 +3,7 @@
         --rm \
         --name bfv_sql \
         -p3106:3306 \
-        -v $(pwd)/mysql:/var/lib/mysql \
+        -v mysql:/var/lib/mysql \
         -e MYSQL_DATABASE=bfv \
         -e MYSQL_USER=bfv \
         -e MYSQL_PASSWORD=bfv \

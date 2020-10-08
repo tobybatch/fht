@@ -112,7 +112,7 @@
   </component>
   <component name="PhpProjectServersManager">
     <servers>
-      <server host="localhost" id="352381ef-ad78-407f-b32b-9d76e8b9c353" name="Native Apache" />
+      <server host="bfv.test" id="352381ef-ad78-407f-b32b-9d76e8b9c353" name="bfv.test" />
     </servers>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

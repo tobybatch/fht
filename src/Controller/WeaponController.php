@@ -25,9 +25,11 @@ class WeaponController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="weapon_new", methods={"GET","POST"})
-     */
+  /**
+   * @Route("/new", name="weapon_new", methods={"GET","POST"})
+   * @param Request $request
+   * @return Response
+   */
     public function new(Request $request): Response
     {
         $weapon = new Weapon();
