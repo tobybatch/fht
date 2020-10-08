@@ -25,17 +25,23 @@ function waitForDB() {
 
 function handleStartup() {
   # first start?
-  if ! [ -e /opt/bfv/installed ]; then 
+  if ! [ -e /opt/bfv/installed ]; then
     touch /opt/bfv/.env
     echo "first run - install symfony"
     /opt/bfv/bin/console -n doctrine:schema:create
-    echo $bfv > /opt/bfv/installed
+    touch /opt/bfv/installed
   fi
   echo "bfv2 ready"
 }
 
+if [ -z "$TRUSTED_HOSTS" ]; then
+  export TRUSTED_HOSTS=localhost
+fi
+
 waitForDB
 handleStartup
+symfony self:update -y
 /opt/bfv/bin/console cache:clear --env=$APP_ENV
-exec php-fpm
-exit
+
+symfony serve
+# php -S 0.0.0.0:8888 -t public

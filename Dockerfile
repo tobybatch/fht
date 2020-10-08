@@ -8,7 +8,11 @@ FROM composer:1.9 AS composer
 RUN mkdir /opt/bfv && \
     composer require --working-dir=/opt/bfv hirak/prestissimo
 
-FROM php:7.4.7-fpm-alpine3.12 AS fpm-alpine-php-ext-base
+FROM php:7.4.11-cli-alpine AS symfony
+RUN apk add --no-cache bash && \
+    wget https://get.symfony.com/cli/installer -O - | bash
+
+FROM php:7.4.11-cli-alpine AS cli-alpine-php-ext-base
 RUN apk add --no-cache \
     # build-tools
     autoconf \
@@ -38,27 +42,27 @@ RUN apk add --no-cache \
     # xsl
     libxslt-dev
 
-FROM fpm-alpine-php-ext-base AS php-ext-gd
+FROM cli-alpine-php-ext-base AS php-ext-gd
 RUN docker-php-ext-configure gd --with-freetype && \
     docker-php-ext-install -j$(nproc) gd
 
 # php extension intl : 15.26s
-FROM fpm-alpine-php-ext-base AS php-ext-intl
+FROM cli-alpine-php-ext-base AS php-ext-intl
 RUN docker-php-ext-install -j$(nproc) intl
 
 # php extension pdo_mysql : 6.14s
-FROM fpm-alpine-php-ext-base AS php-ext-pdo_mysql
+FROM cli-alpine-php-ext-base AS php-ext-pdo_mysql
 RUN docker-php-ext-install -j$(nproc) pdo_mysql
 
 # php extension zip : 8.18s
-FROM fpm-alpine-php-ext-base AS php-ext-zip
+FROM cli-alpine-php-ext-base AS php-ext-zip
 RUN docker-php-ext-install -j$(nproc) zip
 
 # php extension xsl : ?.?? s
-FROM fpm-alpine-php-ext-base AS php-ext-xsl
+FROM cli-alpine-php-ext-base AS php-ext-xsl
 RUN docker-php-ext-install -j$(nproc) xsl
 
-FROM php:7.4.7-fpm-alpine3.12 AS fpm-alpine-base
+FROM php:7.4.11-cli-alpine AS cli-alpine-base
 RUN apk add --no-cache \
         bash \
         freetype \
@@ -68,11 +72,11 @@ RUN apk add --no-cache \
         libpng \
         libzip \
         libxslt-dev && \
-    touch /use_fpm
+    touch /use_cli
 
 EXPOSE 9000
 
-FROM fpm-alpine-base AS base
+FROM cli-alpine-base AS base
 LABEL maintainer="tobias@neontribe.co.uk"
 ARG TZ=Europe/London
 ENV TZ=${TZ}
@@ -105,16 +109,20 @@ COPY --from=php-ext-gd /usr/local/lib/php/extensions/no-debug-non-zts-20190902/g
 COPY --from=php-ext-intl /usr/local/etc/php/conf.d/docker-php-ext-intl.ini /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
 COPY --from=php-ext-intl /usr/local/lib/php/extensions/no-debug-non-zts-20190902/intl.so /usr/local/lib/php/extensions/no-debug-non-zts-20190902/intl.so
 
+# Symfony
+COPY --from=symfony /root/.symfony/bin/symfony /usr/local/bin/symfony
+
+RUN apk add --no-cache nodejs npm
+RUN npm install yarn
+#RUN node_modules/.bin/yarn install
+
 ENV DATABASE_URL=sqlite:///%kernel.project_dir%/var/data/bfv.sqlite
 ENV APP_SECRET=change_this_to_something_unique
-# The default container name for nginx is nginx
-ENV TRUSTED_PROXIES=nginx,localhost,127.0.0.1
-ENV TRUSTED_HOSTS=nginx,localhost,127.0.0.1
+ENV TRUSTED_PROXIES=localhost
+ENV TRUSTED_HOSTS=localhost
 
 VOLUME [ "/opt/bfv" ]
 ENTRYPOINT /startup.sh
-
-
 
 ###########################
 # final build
@@ -124,17 +132,17 @@ FROM base AS prod
 COPY --from=git --chown=www-data:www-data /opt/bfv /opt/bfv
 COPY monolog-prod.yaml /opt/bfv/config/packages/prod/monolog.yaml
 WORKDIR /opt/bfv
-RUN apk add --no-cache nodejs npm
-RUN npm install yarn
-RUN node_modules/.bin/yarn install
 RUN \
     echo APP_ENV=prod > /opt/bfv/.env && \
     composer install --working-dir=/opt/bfv --no-dev --optimize-autoloader && \
-    composer require symfony/dotenv && \
     mkdir -p /opt/bfv/var/cache && \
     composer clearcache && \
     chown -R www-data:www-data /opt/bfv && \
-    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+    cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
+    apk add --no-cache yarn && \
+    yarn --cwd /opt/bfv && \
+    yarn --cwd /opt/bfv encore production && \
+    composer require symfony/dotenv
 
 ENV APP_ENV=prod
 
